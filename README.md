@@ -75,30 +75,56 @@ Client-server chat applications are foundational to real-time communication over
 ## Program 
 
 ~~~
-client side:
-  i=input("Enter a data: ") 
-  c.send(i.encode()) 
-  ack=c.recv(1024).decode() 
-  if ack: 
-    print(ack) 
-    continue 
-  else: 
-    c.close() 
-    break
+server.py
 
-server side:
-import socket 
-s=socket.socket() 
-s.connect(('localhost',8000)) 
-while True: 
-  print(s.recv(1024).decode()) 
-  s.send("Acknowledgement Recived".encode())
+import socket
+
+# Server setup
+host = '127.0.0.1'   # Localhost
+port = 5000          # Port number
+
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_socket.bind((host, port))
+server_socket.listen(1)
+
+print("Server is listening on", host, ":", port)
+conn, addr = server_socket.accept()
+print("Connection from:", addr)
+
+while True:
+    data = conn.recv(1024).decode()
+    if not data:
+        break
+    print("Client:", data)
+    message = input("Server: ")
+    conn.send(message.encode())
+
+conn.close()
+
+client.py
+
+import socket
+
+# Client setup
+host = '127.0.0.1'   # Same as server
+port = 5000
+
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client_socket.connect((host, port))
+
+while True:
+    message = input("Client: ")
+    client_socket.send(message.encode())
+    data = client_socket.recv(1024).decode()
+    print("Server:", data)
+
+client_socket.close()
 ~~~
 
-## Output:
-<img width="679" height="307" alt="image" src="https://github.com/user-attachments/assets/857ac8f8-0e2f-42f8-aba2-dbed129fc240" />
+## Output 
+<img width="953" height="272" alt="image" src="https://github.com/user-attachments/assets/f4307059-8223-4780-a9d9-d69763453daa" />
 
-<img width="664" height="258" alt="image" src="https://github.com/user-attachments/assets/1c1b8f8f-025b-4260-8db7-b99f1a1de18d" />
+
 
 ## Result:
 
